@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="treeView.css" rel="stylesheet">
+    <title>Tree Viewer</title>
+</head>
+<body >
+    <h1>Tree View</h1>
+    <!-- <canvas width="900" height="600" id="canvas" onmousedown="showCoords(event)">The tree view canvas</canvas> -->
+    <canvas width="900" height="600" id="canvas" onmousedown="startMouseDownMove(event)" onmouseup="drawSquareOnEvent(event)" tabindex='1'>The tree view canvas</canvas>
+    <h4 id="coordinateDisplay"></h4>
+    <script src="treeView.js"></script>
+</body>
+</html>

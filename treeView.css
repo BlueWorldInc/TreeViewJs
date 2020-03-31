@@ -1,0 +1,20 @@
+html {
+    height: 100%;
+    overflow: hidden
+}
+
+
+body {
+    min-height: 100%;
+    overflow: hidden;
+    /* background: radial-gradient(crimson, skyblue); */
+    background: radial-gradient(ellipse at top, #363c8c, transparent),
+            radial-gradient(ellipse at bottom, #44937b, transparent);
+    background-size: auto 280%;
+}
+
+h1, h4, canvas {
+    margin-left: 20%;
+    margin-right: 25%;
+    text-align: center;
+}

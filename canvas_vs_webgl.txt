@@ -1,0 +1,28 @@
+canvas framework
+canvas made up button
+canvas tutorial
+canvas vs webgl
+button unity
+
+classe Singleton
+https://crunchify.com/lazy-creation-of-singleton-threadsafe-instance-without-using-synchronized-keyword/
+serialized to JSON or SVG
+
+https://www.blogduwebdesign.com/6-ressources-frameworks-travailler-html5-canvas/
+framework canvas:
+CanvasQuery
+Fabric.js
+Stage.js
+Easel.js
+Three.js (3d)
+Isomer (3d isométrique)
+
+Konva.js 
+
+
+https://www.scriptol.fr/html5/bouton.php
+https://github.com/bazizi/HTML5-Canvas-Button/blob/master/HTML5Utils.js
+https://canvas.gsa.ac.uk/courses/149/pages/buttons
+http://www.osd.net/blog/web-development/css/create-a-css-like-button-with-hmtl5-canvas-element-using-gradient/
+https://www.html5tricks.com/demo/html5-canvas-animated-button/index.html
+https://www.w3schools.com/graphics/game_controllers.asp

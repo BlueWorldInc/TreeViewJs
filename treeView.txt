@@ -1,0 +1,23 @@
+Objectif:
+L'objectif est de crée un site ou l'on peut voir, visualiser et manipuler un arbre
+de donnée. Le but est de pouvoir ajouter un arbre et de le visualiser par la suite,
+avec la possibilité de modifier l'arbre. 
+On devra pouvoir déplacer chaque node de l'arbre dans l'écran, ainsi qu'ajouter, 
+supprimer des nodes. On aura un panel de contrôle (à droite de l'écran).
+Qui permettra de faire l'ajout de donnée.
+Egalement par la suite il devra y avoir la possibilité de visualiser les
+différents algorithme de recherche dans un arbre.
+
+-crée la possibilité d'ajouter et de supprimer des nodes (à l'endroit ou se trouve 
+la souris)
+-possibilité de bouger un node selectionner en temps réel
+-possibilité de redimensionner un node en temps réel
+-ajouter un "redimensionneur" autour d'un node
+-possibilité d'ajouter des liens à partir d'un node
+-possibilité de liée se liens à un autre node
+-faire que le lien soit "beau" (c'est à dire souple et non juste un trait)
+-ajouter des boutons sur le panel
+-faire en sorte que le panel soit "beau", avec une texture
+-faire en sorte d'ajouter une animation autour du node lorsque selectionner 
+(un "bou" de cercle qui tourne autour)
+-faire en sorte de blinker un node à un moment arbitraire donnée
