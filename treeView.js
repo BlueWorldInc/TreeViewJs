@@ -29,15 +29,24 @@ class texture {
 
     constructor(link) {
         this.link = link;
+        this.base_image = new Image();
+        this.base_image.src = link;
     }
 
-    drawImage(x = 0, y = 0, width = 100, height = 100) {
-        var base_image = new Image();
-        base_image.src = this.link;
-        base_image.onload = function(){
-            ctx.drawImage(base_image, x, y, base_image.dWidth = width, base_image.dHeight = height);
-          
-        }
+    /*
+    var base_image = new Image();
+    base_image.src = 'img/sea.jpg';
+    base_image.xx = this.x
+    base_image.yx = this.y
+    base_image.width = this.width
+    base_image.height = this.height
+    ctx.drawImage(base_image, base_image.xx, base_image.yx, base_image.dWidth = this.width, base_image.dHeight = this.height);
+    */
+
+   drawTexture(x = 0, y = 0, width = 100, height = 100) {
+        //base_image.onload = function() {
+        ctx.drawImage(this.base_image, x, y, this.base_image.dWidth = width, this.base_image.dHeight = height);
+        //}
     }
 
 }
@@ -68,28 +77,19 @@ class map {
         ctx.beginPath();
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
+        this.drawNodes();
+        this.drawPanel();
+    }
+
+    drawPanel() {
+        this.panel.drawPanel();
     }
 
     drawNodes() {
         for (var i = 0; i < this.nodeList.length; i++) {
             this.nodeList[i].drawNode();
-            // this.drawNode(this.nodeList[i].x, this.nodeList[i].y, this.nodeList[i].width, this.nodeList[i].height, this.nodeList[i].color);
         }
-        this.panel.drawPanel();
     }
-
-    // drawPanel() {
-    //     ctx.beginPath();
-    //     ctx.fillStyle = this.panel.color;
-    //     ctx.fillRect(this.panel.x, this.panel.y, this.panel.width, this.panel.height);
-    //     this.panel.drawButtons();
-    // }
-
-    // drawNode(x, y, width, height, color) {
-    //     ctx.beginPath();
-    //     ctx.fillStyle = color;
-    //     ctx.fillRect(x, y, width, height);
-    // }
 
     isHovered(evt, node) {
         var mouseX = getMousePos(canvas, evt).x;
@@ -147,7 +147,7 @@ class node {
         if (this.selected) {
             this.x = x;
             this.y = y;
-            this.selected = false;
+      //      this.selected = false;
         }
     }
 
@@ -218,6 +218,10 @@ class panel {
         // this.texture.drawImage();
     }
 
+    drawTexture() {
+        this.texture.drawTexture(this.x, this.y, this.width, this.height);
+    }
+
     drawPanel() {
         var gradient = ctx.createLinearGradient(0, 0, this.width, this.height);
         gradient.addColorStop(0, 'yellow');
@@ -225,15 +229,7 @@ class panel {
         ctx.beginPath();
         ctx.fillStyle = gradient;
         ctx.fillRect(this.x, this.y, this.width, this.height);
-        var base_image = new Image();
-        base_image.src = 'img/sea.jpg';
-        base_image.xx = this.x
-        base_image.yx = this.y
-        base_image.width = this.width
-        base_image.height = this.height
-        base_image.onload = function(){
-          ctx.drawImage(base_image, this.xx, this.yx, base_image.dWidth = this.width, base_image.dHeight = this.height);
-        }
+        this.drawTexture();
         this.drawButtons();
     }
 
@@ -259,7 +255,12 @@ firstPanel.addButton(firstButton);
 firstPanel.addTexture(firstTexture);
 // firstMap.addNode(firstButton);
 firstMap.drawMap();
+firstTexture.base_image.onload = function() {
+    firstTexture.drawTexture(firstPanel.x, firstPanel.y, firstPanel.width, firstPanel.height);
+    firstPanel.drawButtons();
+}
 firstMap.drawNodes();
+
 
 
 canvas.addEventListener('keydown', function (event) {
@@ -269,6 +270,19 @@ canvas.addEventListener('keydown', function (event) {
     displayArea.innerHTML = keys;
     switchMode(keys);
 });
+
+var c = 0;
+var er = 0;
+//setInterval(d, 10);
+
+//while (c < 100) {
+  //  c++;
+    //d();
+//}
+function d() {
+    firstMap.drawMap();
+    console.log(++er);
+}
 
 function showCoords(evt) {
     var displayArea = document.getElementById('coordinateDisplay');
@@ -312,13 +326,21 @@ function drawCircleOnEvent(evt) {
     drawCircle(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y, 50);
 }
 
+function startMouseMove(evt) {
+    if (firstMap.lastSelectedNode !== undefined) {
+        firstMap.lastSelectedNode.moveNode(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y)
+    }
+    firstMap.drawMap();
+}
+
 function drawSquareOnEvent(evt) {
     endMouseDownMove(evt);
     if (mode === "select" || mode === "wait") {
         // firstMap.nodeList[0].changeColor("grey");
         firstMap.selectNode(evt);
-        firstMap.drawNodes();
-    } else if (mode === "resize") {
+        firstMap.drawMap();
+  //      firstMap.drawNodes();
+    } /*else if (mode === "resize") {
         firstMap.lastSelectedNode.width += mouseDownMove.diffx;
         firstMap.lastSelectedNode.height += mouseDownMove.diffy;
         console.log(mouseDownMove);
@@ -331,13 +353,13 @@ function drawSquareOnEvent(evt) {
         // firstMap.nodeList[0].changeColor("yellow");
         // firstMap.addNode(firstRect);
         // firstMap.addNode(firstRect);
-        firstMap.drawMap();
         if (firstMap.lastSelectedNode !== undefined) {
             firstMap.lastSelectedNode.moveNode(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y)
         }
-        firstMap.drawNodes();
+        firstMap.drawMap();
+//        firstMap.drawNodes();
         // drawSquare(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y, 50);
-    }
+    }*/
 }
 
 // function displayKeyPressed(evt) {
@@ -381,17 +403,6 @@ function endMouseDownMove(evt) {
 
 }
 
-// class car {
-//     constructor(marque, chevaux, vitesseMax) {
-//         this.marque = marque;
-//         this.chevaux = chevaux;
-//         this.vitesseMax = vitesseMax;
-//         numberOfCarCreated++;
-//     }
-// }
-// var cars = [];
-// var bmwX5 = new car ("bmw", 150, 230);
-// var golf7 = new car ("vw", 90, 210);
-// var clio4 = new car ("renault", 70, 190);
-// cars.push(bmwX5, golf7, clio4);
-// console.log(cars);
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
