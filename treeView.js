@@ -25,7 +25,7 @@ function make_base(x = 0, y = 0, width = 100, height = 100)
   }
 }
 
-class texture {
+class Texture {
 
     constructor(link) {
         this.link = link;
@@ -148,18 +148,6 @@ class node {
 
     moveNode(x, y) {
         if (this.selected) {
-            // 10+5 - 5
-            // l = 10
-            // m = 10 / 2 + 5
-            //m = this.width / 2 + this.x
-            /*l = this.width - this.x
-            m = l / 2
-            X = m
-            X 
-            X = l / 2
-            X = (this.width - this.x) / 2
-            2X = (this.width - this.x)
-            -2X + this.width = this.x*/
             this.x = (x) - (this.width / 2);
             this.y = (y) - (this.height / 2);
       //      this.selected = false;
@@ -260,7 +248,7 @@ var firstMap = new map(0, 0, 900, 600, "blue");
 var firstRect = new node(30, 30, 60, 60);
 var secondRect = new node(130, 80, 60, 60);
 var firstButton = new button(90, 180, 60, 60);
-var firstTexture = new texture("img/sea.jpg");
+var firstTexture = new Texture("img/sea.jpg");
 secondRect.changeColor("orange");
 var firstPanel = new panel(600, 0, 300, 600);
 firstMap.addNode(firstRect);
@@ -275,7 +263,7 @@ firstTexture.base_image.onload = function() {
     firstPanel.drawButtons();
 }
 firstMap.drawNodes();
-
+mode = "wait";
 
 
 canvas.addEventListener('keydown', function (event) {
@@ -342,31 +330,35 @@ function drawCircleOnEvent(evt) {
 }
 
 function startMouseMove(evt) {
-    if (firstMap.lastSelectedNode !== undefined) {
-        firstMap.lastSelectedNode.moveNode(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y)
+    if (mode === "select" || mode === "wait") {
+        if (firstMap.lastSelectedNode !== undefined) {
+            firstMap.lastSelectedNode.moveNode(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y)
+        }
+        firstMap.drawMap();
     }
-    firstMap.drawMap();
 }
 
 function drawSquareOnEvent(evt) {
     endMouseDownMove(evt);
-    //if (mode === "select" || mode === "wait") {
-        // firstMap.nodeList[0].changeColor("grey");
+    if (mode === "select" || mode === "wait") {
         firstMap.selectNode(evt);
         if (firstMap.lastSelectedNode !== undefined) {
             firstMap.lastSelectedNode.moveNode(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y)
         }
         firstMap.drawMap();
-  //      firstMap.drawNodes();
-    //}
-     //else 
-     if (mode === "resize") {
+    } else if (mode === "resize") {
         firstMap.lastSelectedNode.width += mouseDownMove.diffx;
         firstMap.lastSelectedNode.height += mouseDownMove.diffy;
         console.log(mouseDownMove);
         firstMap.drawMap();
         firstMap.drawNodes();
-    } /*else {
+    } else if (mode === "add") {
+        firstMap.addNode(new node(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y, 60, 60));
+        firstMap.drawMap();
+    }
+    
+    
+    /*else {
         ctx.clearRect(0, 0, 900, 900);
         ctx.fillStyle = '#ff6';
         ctx.fillRect(0, 0, 900, 600);
