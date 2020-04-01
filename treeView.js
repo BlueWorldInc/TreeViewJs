@@ -72,6 +72,14 @@ class map {
         this.panel = panel;
     }
 
+    deleteNode(evt) {
+        if (this.isHovered(evt, this.nodeList[this.nodeList.length - 1])) {
+            this.nodeList.pop();
+        } else {
+            console.log("nope");
+        }
+    }
+
     drawMap() {
         ctx.clearRect(0, 0, this.width, this.height);
         ctx.beginPath();
@@ -247,6 +255,8 @@ class panel {
 var firstMap = new map(0, 0, 900, 600, "blue");
 var firstRect = new node(30, 30, 60, 60);
 var secondRect = new node(130, 80, 60, 60);
+var thirdRect = new node(130, 80, 60, 60);
+console.log(thirdRect);
 var firstButton = new button(90, 180, 60, 60);
 var firstTexture = new Texture("img/sea.jpg");
 secondRect.changeColor("orange");
@@ -354,6 +364,10 @@ function drawSquareOnEvent(evt) {
         firstMap.drawNodes();
     } else if (mode === "add") {
         firstMap.addNode(new node(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y, 60, 60));
+        firstMap.drawMap();
+    } else if (mode === "erase") {
+        firstMap.selectNode(evt);
+        firstMap.deleteNode(evt);
         firstMap.drawMap();
     }
     
