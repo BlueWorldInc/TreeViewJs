@@ -104,7 +104,10 @@ class map {
     getSelectedNode(evt) {
         for (var i = 0; i < this.nodeList.length; i++) {
             if (this.isHovered(evt, this.nodeList[i]) === true) {
-                return this.nodeList[i];
+                var hNode = this.nodeList[i];
+                this.nodeList.splice(i, 1);
+                this.nodeList.push(hNode);
+                return hNode;
             }
         }
         return false;
@@ -145,8 +148,20 @@ class node {
 
     moveNode(x, y) {
         if (this.selected) {
-            this.x = x;
-            this.y = y;
+            // 10+5 - 5
+            // l = 10
+            // m = 10 / 2 + 5
+            //m = this.width / 2 + this.x
+            /*l = this.width - this.x
+            m = l / 2
+            X = m
+            X 
+            X = l / 2
+            X = (this.width - this.x) / 2
+            2X = (this.width - this.x)
+            -2X + this.width = this.x*/
+            this.x = (x) - (this.width / 2);
+            this.y = (y) - (this.height / 2);
       //      this.selected = false;
         }
     }
@@ -335,18 +350,23 @@ function startMouseMove(evt) {
 
 function drawSquareOnEvent(evt) {
     endMouseDownMove(evt);
-    if (mode === "select" || mode === "wait") {
+    //if (mode === "select" || mode === "wait") {
         // firstMap.nodeList[0].changeColor("grey");
         firstMap.selectNode(evt);
+        if (firstMap.lastSelectedNode !== undefined) {
+            firstMap.lastSelectedNode.moveNode(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y)
+        }
         firstMap.drawMap();
   //      firstMap.drawNodes();
-    } /*else if (mode === "resize") {
+    //}
+     //else 
+     if (mode === "resize") {
         firstMap.lastSelectedNode.width += mouseDownMove.diffx;
         firstMap.lastSelectedNode.height += mouseDownMove.diffy;
         console.log(mouseDownMove);
         firstMap.drawMap();
         firstMap.drawNodes();
-    } else {
+    } /*else {
         ctx.clearRect(0, 0, 900, 900);
         ctx.fillStyle = '#ff6';
         ctx.fillRect(0, 0, 900, 600);

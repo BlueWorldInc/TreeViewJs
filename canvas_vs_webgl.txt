@@ -8,6 +8,19 @@ classe Singleton
 https://crunchify.com/lazy-creation-of-singleton-threadsafe-instance-without-using-synchronized-keyword/
 serialized to JSON or SVG
 
+https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Basic_animations
+
+await and async
+https://www.sitepoint.com/delay-sleep-pause-wait/
+https://flaviocopes.com/javascript-sleep/
+https://javascript.info/async-await
+
+if(!objImg.complete)
+{
+/// do other work;
+}
+
+
 https://www.blogduwebdesign.com/6-ressources-frameworks-travailler-html5-canvas/
 framework canvas:
 CanvasQuery
