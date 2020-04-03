@@ -51,6 +51,29 @@ class Texture {
 
 }
 
+class Text {
+    constructor(text, color = "yellow") {
+        this.text = text;
+        this.color = color;
+    }
+
+    drawText(x, y) {
+        ctx.fillText(this.text, x, y);
+    }
+
+    changeText(text) {
+        this.text = text;
+    }
+
+    changeFont(font) {
+        ctx.font = font;
+    }
+
+    changeColor(color) {
+        this.color = color;
+    }
+}
+
 class map {
 
     constructor(x, y, width, height, color) {
@@ -218,6 +241,7 @@ class panel {
         this.color = "grey";
         this.buttonsList = [];
         this.texture;
+        this.text;
     }
 
     addButton(button) {
@@ -229,8 +253,17 @@ class panel {
         // this.texture.drawImage();
     }
 
+    addText(text) {
+        this.text = text;
+    }
+
     drawTexture() {
         this.texture.drawTexture(this.x, this.y, this.width, this.height);
+    }
+
+    drawText(x = 0, y = 0) {
+        ctx.fillStyle = this.text.color;
+        this.text.drawText(this.x + x, this.y + y);
     }
 
     drawPanel() {
@@ -242,6 +275,7 @@ class panel {
         ctx.fillRect(this.x, this.y, this.width, this.height);
         this.drawTexture();
         this.drawButtons();
+        this.drawText(20, 50);
     }
 
     drawButtons() {
@@ -256,22 +290,29 @@ var firstMap = new map(0, 0, 900, 600, "blue");
 var firstRect = new node(30, 30, 60, 60);
 var secondRect = new node(130, 80, 60, 60);
 var thirdRect = new node(130, 80, 60, 60);
-console.log(thirdRect);
+// console.log(thirdRect);
 var firstButton = new button(90, 180, 60, 60);
 var firstTexture = new Texture("img/sea.jpg");
 secondRect.changeColor("orange");
 var firstPanel = new panel(600, 0, 300, 600);
+var firstText = new Text("Hellow");
+// canvas.focus();
+firstText.changeFont("48px serif");
+ firstText.changeColor("red");
 firstMap.addNode(firstRect);
 firstMap.addNode(secondRect);
 firstMap.addPanel(firstPanel);
 firstPanel.addButton(firstButton);
 firstPanel.addTexture(firstTexture);
+firstPanel.addText(firstText);
 // firstMap.addNode(firstButton);
 firstMap.drawMap();
 firstTexture.base_image.onload = function() {
     firstTexture.drawTexture(firstPanel.x, firstPanel.y, firstPanel.width, firstPanel.height);
     firstPanel.drawButtons();
+    firstPanel.drawText(20, 50);
 }
+//console.log(firstText.text.complete);
 firstMap.drawNodes();
 mode = "wait";
 
