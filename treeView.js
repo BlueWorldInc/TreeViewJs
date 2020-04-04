@@ -85,6 +85,7 @@ class map {
         this.nodeList = [];
         this.lastSelectedNode;
         this.panel;
+        this.drawableArea = {width: this.width, height: this.height};
     }
 
     addNode(node) {
@@ -92,6 +93,7 @@ class map {
     }
 
     addPanel(panel) {
+        this.resizeDrawableArea(this.width - panel.width);
         this.panel = panel;
     }
 
@@ -119,6 +121,12 @@ class map {
     drawNodes() {
         for (var i = 0; i < this.nodeList.length; i++) {
             this.nodeList[i].drawNode();
+        }
+    }
+
+    moveNode(node, x, y) {
+        if (x <= this.drawableArea.width) {
+            node.moveNode(x, y);
         }
     }
 
@@ -163,11 +171,16 @@ class map {
         }
     }
 
+    resizeDrawableArea(newWidth, newHeight = this.height) {
+        this.drawableArea.width = newWidth;
+        this.drawableArea.height = newHeight;
+    }
+
 }
 
 class node {
 
-    constructor(x, y, width, height) {
+    constructor(x, y, width, height, value = 100) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -175,6 +188,13 @@ class node {
         this.color = "yellow";
         this.selected = false;
         // drawSquare(x, y, width);
+        this.value = value;
+        this.random();
+        this.sonList = [];
+    }
+
+    random() {
+        this.value += Math.floor(Math.random() * 100);
     }
 
     moveNode(x, y) {
@@ -187,6 +207,10 @@ class node {
 
     changeColor(color) {
         this.color = color;
+    }
+
+    addSon(son) {
+        this.sonList.push(son);
     }
 
     selectNode() {
@@ -267,11 +291,13 @@ class panel {
     }
 
     drawPanel() {
-        var gradient = ctx.createLinearGradient(0, 0, this.width, this.height);
+       /* var gradient = ctx.createLinearGradient(0, 0, this.width, this.height);
         gradient.addColorStop(0, 'yellow');
         gradient.addColorStop(1, 'brown');
         ctx.beginPath();
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = gradient;*/
+        ctx.beginPath();
+        ctx.fillStyle = "rgb(136, 89, 45)";
         ctx.fillRect(this.x, this.y, this.width, this.height);
         this.drawTexture();
         this.drawButtons();
@@ -284,6 +310,10 @@ class panel {
         }
     }
 
+    changeText(newText) {
+        this.text.changeText(newText);
+    }
+
 }
 
 var firstMap = new map(0, 0, 900, 600, "blue");
@@ -292,13 +322,13 @@ var secondRect = new node(130, 80, 60, 60);
 var thirdRect = new node(130, 80, 60, 60);
 // console.log(thirdRect);
 var firstButton = new button(90, 180, 60, 60);
-var firstTexture = new Texture("img/sea.jpg");
+var firstTexture = new Texture("img/bg_01_02.png");
 secondRect.changeColor("orange");
 var firstPanel = new panel(600, 0, 300, 600);
 var firstText = new Text("Hellow");
 // canvas.focus();
 firstText.changeFont("48px serif");
- firstText.changeColor("red");
+firstText.changeColor("red");
 firstMap.addNode(firstRect);
 firstMap.addNode(secondRect);
 firstMap.addPanel(firstPanel);
@@ -383,7 +413,8 @@ function drawCircleOnEvent(evt) {
 function startMouseMove(evt) {
     if (mode === "select" || mode === "wait") {
         if (firstMap.lastSelectedNode !== undefined) {
-            firstMap.lastSelectedNode.moveNode(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y)
+            firstMap.moveNode(firstMap.lastSelectedNode, getMousePos(canvas, evt).x, getMousePos(canvas, evt).y);
+            firstPanel.changeText(firstMap.lastSelectedNode.value);
         }
         firstMap.drawMap();
     }
@@ -394,7 +425,8 @@ function drawSquareOnEvent(evt) {
     if (mode === "select" || mode === "wait") {
         firstMap.selectNode(evt);
         if (firstMap.lastSelectedNode !== undefined) {
-            firstMap.lastSelectedNode.moveNode(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y)
+            firstMap.moveNode(firstMap.lastSelectedNode, getMousePos(canvas, evt).x, getMousePos(canvas, evt).y);
+            firstPanel.changeText(firstMap.lastSelectedNode.value);
         }
         firstMap.drawMap();
     } else if (mode === "resize") {
