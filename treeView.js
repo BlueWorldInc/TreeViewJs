@@ -86,6 +86,9 @@ class map {
         this.lastSelectedNode;
         this.panel;
         this.drawableArea = {width: this.width, height: this.height};
+        this.texture;
+        //to be replaced by tree
+        this.link;
     }
 
     addNode(node) {
@@ -95,6 +98,14 @@ class map {
     addPanel(panel) {
         this.resizeDrawableArea(this.width - panel.width);
         this.panel = panel;
+    }
+
+    addTexture(texture) {
+        this.texture = texture;
+    }
+
+    addLink(link) {
+        this.link = link;
     }
 
     deleteNode(evt) {
@@ -108,10 +119,13 @@ class map {
     drawMap() {
         ctx.clearRect(0, 0, this.width, this.height);
         ctx.beginPath();
-        ctx.fillStyle = this.color;
+        // ctx.fillStyle = this.color;
+        ctx.fillStyle = "rgb(203, 169, 124)";
         ctx.fillRect(this.x, this.y, this.width, this.height);
+        this.drawTexture();
         this.drawNodes();
         this.drawPanel();
+        this.drawLink();
     }
 
     drawPanel() {
@@ -122,6 +136,16 @@ class map {
         for (var i = 0; i < this.nodeList.length; i++) {
             this.nodeList[i].drawNode();
         }
+    }
+
+    drawTexture() {
+        this.texture.drawTexture(this.x, this.y, this.drawableArea.width, this.height);
+    }
+
+    drawLink() {
+        this.link.drawFrom(this.nodeList[0]);
+        this.link.drawTo(this.nodeList[1]);
+        this.link.drawLink();
     }
 
     moveNode(node, x, y) {
@@ -253,7 +277,41 @@ class button extends node {
 
 }
 
+class Link {
 
+    constructor(startX, startY, endX, endY) {
+        this.startX = startX;
+        this.startY = startY;
+        this.endX = endX;
+        this.endY = endY;
+        this.lineWidth = "4";
+        this.color = "dimgray";
+    }
+
+    drawLink() {
+        let oldLineWidth = ctx.lineWidth;
+        let oldColor = ctx.strokeStyle;
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = this.lineWidth;
+        ctx.beginPath();
+        ctx.moveTo(this.startX, this.startY);
+        ctx.bezierCurveTo(230, 150, 30, 80, this.endX, this.endY);
+        ctx.stroke();
+        ctx.lineWidth = oldLineWidth;
+        ctx.strokeStyle = oldColor;
+    }
+
+    drawFrom(node) {
+        this.startX = node.x + Math.round(node.width / 2);
+        this.startY = node.y + node.height;
+    }
+
+    drawTo(node) {
+        this.endX = node.x + Math.round(node.width / 2);
+        this.endY = node.y;
+    }
+
+}
 
 class panel {
 
@@ -323,18 +381,24 @@ var thirdRect = new node(130, 80, 60, 60);
 // console.log(thirdRect);
 var firstButton = new button(90, 180, 60, 60);
 var firstTexture = new Texture("img/bg_01_02.png");
+var secondTexture = new Texture("img/bg_01_02.png");
 secondRect.changeColor("orange");
 var firstPanel = new panel(600, 0, 300, 600);
 var firstText = new Text("Hellow");
+var firstLink = new Link(50, 50, 300, 300);
 // canvas.focus();
 firstText.changeFont("48px serif");
 firstText.changeColor("red");
 firstMap.addNode(firstRect);
 firstMap.addNode(secondRect);
 firstMap.addPanel(firstPanel);
+firstMap.addTexture(secondTexture);
+firstMap.addLink(firstLink);
 firstPanel.addButton(firstButton);
 firstPanel.addTexture(firstTexture);
 firstPanel.addText(firstText);
+firstLink.drawFrom(firstRect);
+firstLink.drawTo(secondRect);
 // firstMap.addNode(firstButton);
 firstMap.drawMap();
 firstTexture.base_image.onload = function() {
@@ -342,8 +406,13 @@ firstTexture.base_image.onload = function() {
     firstPanel.drawButtons();
     firstPanel.drawText(20, 50);
 }
+secondTexture.base_image.onload = function() {
+    secondTexture.drawTexture(firstMap.x, firstMap.y, firstMap.drawableArea.width, firstMap.height);
+    firstMap.drawMap();
+}
 //console.log(firstText.text.complete);
 firstMap.drawNodes();
+firstLink.drawLink();
 mode = "wait";
 
 
