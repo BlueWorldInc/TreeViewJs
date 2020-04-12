@@ -133,7 +133,7 @@ class map {
         this.drawTexture();
         this.drawNodes();
         this.drawPanel();
-        this.drawLink();
+        // this.drawLink();
         this.drawTree();
     }
 
@@ -167,6 +167,10 @@ class map {
         }
     }
 
+    moveTree(x, y) {
+        this.tree.moveTree(x, y);
+    }
+
     isHovered(evt, node) {
         var mouseX = getMousePos(canvas, evt).x;
         var mouseY = getMousePos(canvas, evt).y;
@@ -183,6 +187,14 @@ class map {
                 var hNode = this.nodeList[i];
                 this.nodeList.splice(i, 1);
                 this.nodeList.push(hNode);
+                return hNode;
+            }
+        }
+        for (var i = 0; i < this.tree.nodeList.length; i++) {
+            if (this.isHovered(evt, this.tree.nodeList[i]) === true) {
+                var hNode = this.tree.nodeList[i];
+                this.tree.nodeList.splice(i, 1);
+                this.tree.nodeList.push(hNode);
                 return hNode;
             }
         }
@@ -240,6 +252,22 @@ class Tree {
         for (let i = 0; i < this.nodeList.length; i++) {
             this.nodeList[i].drawNode();
         }
+    }
+
+    moveTree(x, y) {
+        let baseX = this.nodeList[0].x;
+        let baseY = this.nodeList[0].y;
+        for (let i = 0; i < this.nodeList.length; i++) {
+            this.nodeList[i].selected = true;
+        }
+        this.nodeList[0].moveNode(x, y);
+        for (let i = 1; i < this.nodeList.length; i++) {
+            this.nodeList[i].moveNode(this.nodeList[i].x + x - baseX, this.nodeList[i].y + y - baseY);
+        }
+        for (let i = 0; i < this.nodeList.length; i++) {
+            // this.nodeList[i].selectNode();
+        }
+        this.drawTree();
     }
 
 
@@ -556,6 +584,9 @@ function drawSquareOnEvent(evt) {
         firstMap.selectNode(evt);
         firstMap.deleteNode(evt);
         firstMap.drawMap();
+    } else if (mode === "moveTree") {
+        firstMap.moveTree(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y);
+        firstMap.drawMap();
     }
     
     
@@ -598,6 +629,8 @@ function switchMode(key) {
         mode = "select";
     } else if (key === "r") {
         mode = "resize";
+    } else if (key === "t") {
+        mode = "moveTree";
     } else {
         mode = "wait";
     }
