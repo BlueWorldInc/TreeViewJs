@@ -268,8 +268,33 @@ class Tree {
             // this.nodeList[i].selectNode();
         }
         this.drawTree();
+        this.treeSelector();
     }
 
+    treeSelector() {
+        let selectorDimension = {minX: this.nodeList[0].x, maxX: 0, minY: this.nodeList[0].y, maxY:0};
+        for (let i = 0; i < this.nodeList.length; i++) {
+            if (this.nodeList[i].x < selectorDimension.minX) {
+                selectorDimension.minX = this.nodeList[i].x;
+            }
+            if (this.nodeList[i].x > selectorDimension.maxX) {
+                selectorDimension.maxX = this.nodeList[i].x + this.nodeList[i].width;
+            }
+            if (this.nodeList[i].y < selectorDimension.minY) {
+                selectorDimension.minY = this.nodeList[i].y;
+            }
+            if (this.nodeList[i].y > selectorDimension.maxY) {
+                selectorDimension.maxY = this.nodeList[i].y + this.nodeList[i].height;
+            }
+        }
+        ctx.beginPath();
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 5;
+        ctx.rect(selectorDimension.minX, selectorDimension.minY, selectorDimension.maxX - selectorDimension.minX, selectorDimension.maxY - selectorDimension.minY);
+        ctx.stroke();
+        console.log(selectorDimension);
+        console.log(this.nodeList);
+    }
 
 }
 
@@ -587,6 +612,7 @@ function drawSquareOnEvent(evt) {
     } else if (mode === "moveTree") {
         firstMap.moveTree(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y);
         firstMap.drawMap();
+        firstMap.tree.treeSelector();
     }
     
     

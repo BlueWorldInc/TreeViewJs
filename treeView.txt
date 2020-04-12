@@ -9,8 +9,8 @@ Egalement par la suite il devra y avoir la possibilité de visualiser les
 différents algorithme de recherche dans un arbre.
 
 -crée la possibilité d'ajouter et de supprimer des nodes (à l'endroit ou se trouve 
-la souris)
--possibilité de bouger un node selectionner en temps réel
+la souris) X
+-possibilité de bouger un node selectionner en temps réel X
 -possibilité de redimensionner un node en temps réel
 -ajouter un "redimensionneur" autour d'un node
 -possibilité d'ajouter des liens à partir d'un node
@@ -21,6 +21,9 @@ la souris)
 -faire en sorte d'ajouter une animation autour du node lorsque selectionner 
 (un "bou" de cercle qui tourne autour)
 -faire en sorte de blinker un node à un moment arbitraire donnée
+-faire un selector sur tout le tree
+-ajouter une lettre dans le node
+-faire un node arrondie
 -ajouter de la possibilité de zoom et de dézoom (peut etre)
 
 bug:
