@@ -133,7 +133,7 @@ class map {
         this.drawTexture();
         this.drawNodes();
         this.drawPanel();
-        // this.drawLink();
+        //this.drawLink();
         this.drawTree();
     }
 
@@ -232,6 +232,7 @@ class Tree {
     constructor() {
         this.nodeList = [];
         this.defaultTree();
+        this.selectorDimension = {minX: 0, maxX: 0, minY: 0, maxY:0, midX: 0, midY: 0};
     }
 
     defaultTree() {
@@ -262,14 +263,16 @@ class Tree {
     }
 
     moveTree(x, y) {
-        let baseX = this.nodeList[0].x;
-        let baseY = this.nodeList[0].y;
+        this.setSelectorDimension();
+        let baseX = this.selectorDimension.midX;
+        let baseY = this.selectorDimension.midY;
         for (let i = 0; i < this.nodeList.length; i++) {
             this.nodeList[i].selected = true;
         }
-        this.nodeList[0].moveNode(x, y);
-        for (let i = 1; i < this.nodeList.length; i++) {
-            this.nodeList[i].moveNode(this.nodeList[i].x + x - baseX, this.nodeList[i].y + y - baseY);
+        //this.nodeList[0].moveNode(x, y);
+        for (let i = 0; i < this.nodeList.length; i++) {
+            let n = this.nodeList[i];
+            n.moveNode(n.x + x - baseX + n.width/2, n.y + y - baseY + n.height/2);
         }
         for (let i = 0; i < this.nodeList.length; i++) {
             // this.nodeList[i].selectNode();
@@ -278,26 +281,32 @@ class Tree {
         this.treeSelector();
     }
 
-    treeSelector() {
-        let selectorDimension = {minX: this.nodeList[0].x, maxX: 0, minY: this.nodeList[0].y, maxY:0};
+    setSelectorDimension() {
+        Object.assign(this.selectorDimension, {minX: this.nodeList[0].x, maxX: 0, minY: this.nodeList[0].y, maxY:0});
         for (let i = 0; i < this.nodeList.length; i++) {
-            if (this.nodeList[i].x < selectorDimension.minX) {
-                selectorDimension.minX = this.nodeList[i].x;
+            if (this.nodeList[i].x < this.selectorDimension.minX) {
+                this.selectorDimension.minX = this.nodeList[i].x;
             }
-            if (this.nodeList[i].x > selectorDimension.maxX) {
-                selectorDimension.maxX = this.nodeList[i].x + this.nodeList[i].width;
+            if (this.nodeList[i].x > this.selectorDimension.maxX) {
+                this.selectorDimension.maxX = this.nodeList[i].x + this.nodeList[i].width;
             }
-            if (this.nodeList[i].y < selectorDimension.minY) {
-                selectorDimension.minY = this.nodeList[i].y;
+            if (this.nodeList[i].y < this.selectorDimension.minY) {
+                this.selectorDimension.minY = this.nodeList[i].y;
             }
-            if (this.nodeList[i].y > selectorDimension.maxY) {
-                selectorDimension.maxY = this.nodeList[i].y + this.nodeList[i].height;
+            if (this.nodeList[i].y > this.selectorDimension.maxY) {
+                this.selectorDimension.maxY = this.nodeList[i].y + this.nodeList[i].height;
             }
         }
+        this.selectorDimension.midX = ((this.selectorDimension.maxX - this.selectorDimension.minX) / 2) + this.selectorDimension.minX ;
+        this.selectorDimension.midY = ((this.selectorDimension.maxY - this.selectorDimension.minY) / 2) + this.selectorDimension.minY ;
+    }
+
+    treeSelector() {
+        this.setSelectorDimension();
         ctx.beginPath();
         ctx.strokeStyle = 'red';
         ctx.lineWidth = 5;
-        ctx.rect(selectorDimension.minX, selectorDimension.minY, selectorDimension.maxX - selectorDimension.minX, selectorDimension.maxY - selectorDimension.minY);
+        ctx.rect(this.selectorDimension.minX, this.selectorDimension.minY, this.selectorDimension.maxX - this.selectorDimension.minX, this.selectorDimension.maxY - this.selectorDimension.minY);
         ctx.stroke();
     }
 
@@ -317,6 +326,7 @@ class Node {
         this.value = value;
         this.random();
         this.sonList = [];
+        this.linkList = [];
     }
 
     random() {
@@ -327,12 +337,25 @@ class Node {
         this.idText = idText;
     }
     
+    addLink() {
+        this.linkList.push(new Link(0, 0, 0, 0));
+    }
+
+    drawLinks() {
+        for (let i = 0; i < this.linkList.length; i++) {
+            this.linkList[i].drawFrom(this);
+            this.linkList[i].drawTo(this.sonList[i]);
+            this.linkList[i].drawLink();
+        }
+    }
+
     changeColor(color) {
         this.color = color;
     }
     
     addSon(son) {
         this.sonList.push(son);
+        this.addLink();
     }
     
     moveNode(x, y) {
@@ -369,6 +392,7 @@ class Node {
         if (this.idText !== undefined) {
             this.drawIdText();
         }
+        this.drawLinks();
     }
 
     drawIdText() {
@@ -376,8 +400,6 @@ class Node {
         ctx.fillStyle = "blue";
         // ctx.font = "20px serif";
         let lineHeight = ctx.measureText('M').width;
-        console.log(lineHeight);
-        
         // this.idText.drawText((this.width / 2) + this.x, (this.height / 2) + this.y);
         this.idText.drawText((this.width / 5) + this.x, this.y + lineHeight);
         ctx.restore();
@@ -410,6 +432,7 @@ class RoundNode extends Node {
         if (this.idText !== undefined) {
             this.drawIdText();
         }
+        this.drawLinks();
     }
 
 }
@@ -667,7 +690,12 @@ function drawSquareOnEvent(evt) {
         firstMap.moveTree(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y);
         firstMap.drawMap();
         firstMap.tree.treeSelector();
-    }
+    } else if (mode === "link") {
+        if (firstMap.lastSelectedNode !== undefined) {
+            firstMap.lastSelectedNode.addSon(firstMap.tree.nodeList[5]);
+            firstMap.drawMap();
+        }
+    } 
     
     
     /*else {
@@ -711,6 +739,8 @@ function switchMode(key) {
         mode = "resize";
     } else if (key === "t") {
         mode = "moveTree";
+    } else if (key === "l") {
+        mode = "link";
     } else {
         mode = "wait";
     }
