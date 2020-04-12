@@ -235,15 +235,22 @@ class Tree {
     }
 
     defaultTree() {
+        let letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"];
         let x = 260;
         let y = HEIGHT / 2;
-        let node = new Node (x, y - 150, 60, 60);
+        let text = new Text(letters[0], "blue");
+        let node = new RoundNode (x, y - 150, 60, 60);
+        node.setIdText(text);
         this.nodeList.push(node);
         for (let i = 0; i < 7; i++) {
             x = 50 + (i * 80);
-            node = new Node (x, y - 30, 60, 60);
+            text = new Text(letters[i], "blue");
+            node = new RoundNode (x, y - 30, 60, 60);
+            node.setIdText(text);
+            text = new Text(letters[i + 7], "blue");
             this.nodeList.push(node);
-            node = new Node (x, y + 70, 60, 60);
+            node = new RoundNode (x, y + 70, 60, 60);
+            node.setIdText(text);
             this.nodeList.push(node);
         }
     }
@@ -292,8 +299,6 @@ class Tree {
         ctx.lineWidth = 5;
         ctx.rect(selectorDimension.minX, selectorDimension.minY, selectorDimension.maxX - selectorDimension.minX, selectorDimension.maxY - selectorDimension.minY);
         ctx.stroke();
-        console.log(selectorDimension);
-        console.log(this.nodeList);
     }
 
 }
@@ -308,6 +313,7 @@ class Node {
         this.color = color;
         this.selected = false;
         // drawSquare(x, y, width);
+        this.idText;
         this.value = value;
         this.random();
         this.sonList = [];
@@ -317,6 +323,18 @@ class Node {
         this.value += Math.floor(Math.random() * 100);
     }
 
+    setIdText(idText) {
+        this.idText = idText;
+    }
+    
+    changeColor(color) {
+        this.color = color;
+    }
+    
+    addSon(son) {
+        this.sonList.push(son);
+    }
+    
     moveNode(x, y) {
         if (this.selected) {
             this.x = (x) - (this.width / 2);
@@ -324,15 +342,6 @@ class Node {
       //      this.selected = false;
         }
     }
-
-    changeColor(color) {
-        this.color = color;
-    }
-
-    addSon(son) {
-        this.sonList.push(son);
-    }
-
     selectNode() {
         if (this.selected === true) {
             this.selected = false;
@@ -357,6 +366,50 @@ class Node {
         ctx.beginPath();
         ctx.fillStyle = this.color;
         ctx.fillRect(x, y, this.width, this.height);
+        if (this.idText !== undefined) {
+            this.drawIdText();
+        }
+    }
+
+    drawIdText() {
+        ctx.save();
+        ctx.fillStyle = "blue";
+        // ctx.font = "20px serif";
+        let lineHeight = ctx.measureText('M').width;
+        console.log(lineHeight);
+        
+        // this.idText.drawText((this.width / 2) + this.x, (this.height / 2) + this.y);
+        this.idText.drawText((this.width / 5) + this.x, this.y + lineHeight);
+        ctx.restore();
+    }
+
+}
+
+class RoundNode extends Node {
+
+    constructor(x, y, width, height, value = 100, color = "yellow") {
+        super(x, y, width, height, value = value, color = color);
+    }
+
+    strokeNode(x = this.x, y = this.y) {
+        ctx.beginPath();
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 5;
+        ctx.arc(x + (this.width / 2), y + (this.height / 2), this.width / 2, 0, 2 * Math.PI);
+        ctx.stroke();
+    }
+
+    drawNode(x = this.x, y = this.y) {
+        if (this.selected) {
+            this.strokeNode();
+        }
+        ctx.beginPath();
+        ctx.fillStyle = this.color;
+        ctx.arc(x + (this.width / 2), y + (this.height / 2), this.width / 2, 0, 2 * Math.PI);
+        ctx.fill();
+        if (this.idText !== undefined) {
+            this.drawIdText();
+        }
     }
 
 }
@@ -483,6 +536,7 @@ var firstPanel = new panel(600, 0, 300, 600);
 var firstText = new Text("Hellow");
 var firstLink = new Link(50, 50, 300, 300);
 let firstTree = new Tree();
+let secondText = new Text("A", "blue");
 // canvas.focus();
 firstText.changeFont("48px serif");
 firstText.changeColor("red");
