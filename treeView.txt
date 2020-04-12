@@ -21,3 +21,9 @@ la souris)
 -faire en sorte d'ajouter une animation autour du node lorsque selectionner 
 (un "bou" de cercle qui tourne autour)
 -faire en sorte de blinker un node à un moment arbitraire donnée
+-ajouter de la possibilité de zoom et de dézoom (peut etre)
+
+bug:
+-refaire la selection (car on peut selectionner plusieurs cube, et on peut selectionner un cube en arrière)
+-refaire le resize (essayer de reproduire le bug qui décale les autres nodes, et interraction avec le select, et un mode plus intuitive)
+-refaire la zone interdite pour pas que ca deborde. Que le cube reste dans la zone en entier.

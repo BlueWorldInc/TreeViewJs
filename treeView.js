@@ -4,6 +4,9 @@ var ctx = canvas.getContext('2d');
 // ctx.fillStyle = '#ff6';
 // ctx.fillRect(0, 0, 900, 600);
 // ctx.clearRect(0, 0, 300, 300);
+const WIDTH = canvas.width;
+const HEIGHT = canvas.height;
+
 
 var mode = "add";
 
@@ -89,6 +92,7 @@ class map {
         this.texture;
         //to be replaced by tree
         this.link;
+        this.tree;
     }
 
     addNode(node) {
@@ -106,6 +110,10 @@ class map {
 
     addLink(link) {
         this.link = link;
+    }
+
+    addTree(tree) {
+        this.tree = tree;
     }
 
     deleteNode(evt) {
@@ -126,6 +134,7 @@ class map {
         this.drawNodes();
         this.drawPanel();
         this.drawLink();
+        this.drawTree();
     }
 
     drawPanel() {
@@ -146,6 +155,10 @@ class map {
         this.link.drawFrom(this.nodeList[0]);
         this.link.drawTo(this.nodeList[1]);
         this.link.drawLink();
+    }
+
+    drawTree() {
+        this.tree.drawTree();
     }
 
     moveNode(node, x, y) {
@@ -202,14 +215,44 @@ class map {
 
 }
 
-class node {
+class Tree {
 
-    constructor(x, y, width, height, value = 100) {
+    constructor() {
+        this.nodeList = [];
+        this.defaultTree();
+    }
+
+    defaultTree() {
+        let x = 260;
+        let y = HEIGHT / 2;
+        let node = new Node (x, y - 150, 60, 60);
+        this.nodeList.push(node);
+        for (let i = 0; i < 7; i++) {
+            x = 50 + (i * 80);
+            node = new Node (x, y - 30, 60, 60);
+            this.nodeList.push(node);
+            node = new Node (x, y + 70, 60, 60);
+            this.nodeList.push(node);
+        }
+    }
+
+    drawTree() {
+        for (let i = 0; i < this.nodeList.length; i++) {
+            this.nodeList[i].drawNode();
+        }
+    }
+
+
+}
+
+class Node {
+
+    constructor(x, y, width, height, value = 100, color = "yellow") {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.color = "yellow";
+        this.color = color;
         this.selected = false;
         // drawSquare(x, y, width);
         this.value = value;
@@ -265,7 +308,7 @@ class node {
 
 }
 
-class button extends node {
+class button extends Node {
 
     constructor(x, y, width, height) {
         super(x, y, width, height);
@@ -375,9 +418,9 @@ class panel {
 }
 
 var firstMap = new map(0, 0, 900, 600, "blue");
-var firstRect = new node(30, 30, 60, 60);
-var secondRect = new node(130, 80, 60, 60);
-var thirdRect = new node(130, 80, 60, 60);
+var firstRect = new Node(30, 30, 60, 60);
+var secondRect = new Node(130, 80, 60, 60);
+var thirdRect = new Node(130, 80, 60, 60);
 // console.log(thirdRect);
 var firstButton = new button(90, 180, 60, 60);
 var firstTexture = new Texture("img/bg_01_02.png");
@@ -386,6 +429,7 @@ secondRect.changeColor("orange");
 var firstPanel = new panel(600, 0, 300, 600);
 var firstText = new Text("Hellow");
 var firstLink = new Link(50, 50, 300, 300);
+let firstTree = new Tree();
 // canvas.focus();
 firstText.changeFont("48px serif");
 firstText.changeColor("red");
@@ -399,6 +443,7 @@ firstPanel.addTexture(firstTexture);
 firstPanel.addText(firstText);
 firstLink.drawFrom(firstRect);
 firstLink.drawTo(secondRect);
+firstMap.addTree(firstTree);
 // firstMap.addNode(firstButton);
 firstMap.drawMap();
 firstTexture.base_image.onload = function() {
@@ -505,7 +550,7 @@ function drawSquareOnEvent(evt) {
         firstMap.drawMap();
         firstMap.drawNodes();
     } else if (mode === "add") {
-        firstMap.addNode(new node(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y, 60, 60));
+        firstMap.addNode(new Node(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y, 60, 60));
         firstMap.drawMap();
     } else if (mode === "erase") {
         firstMap.selectNode(evt);
