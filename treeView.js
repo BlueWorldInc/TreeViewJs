@@ -337,10 +337,6 @@ class Node {
         this.idText = idText;
     }
     
-    // addLink() {
-    //     this.linkList.push(new Link(0, 0, 0, 0));
-    // }
-
     drawLinks() {
         for (let i = 0; i < this.sonList.length; i++) {
             this.sonList[i].link.drawFrom(this);
@@ -475,8 +471,10 @@ class Link {
         ctx.strokeStyle = this.color;
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
+        console.log(this.startX + " " + this.startY);
+        console.log(this.endX + " " + this.endY);
         ctx.moveTo(this.startX, this.startY);
-        ctx.bezierCurveTo(230, 150, 30, 80, this.endX, this.endY);
+        ctx.bezierCurveTo(this.endX * 0.9, this.startY * 1.1, (this.startX + this.endX) / 2, this.endY * 0.8, this.endX, this.endY);
         ctx.stroke();
         ctx.lineWidth = oldLineWidth;
         ctx.strokeStyle = oldColor;
