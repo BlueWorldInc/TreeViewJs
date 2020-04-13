@@ -326,6 +326,7 @@ class Node {
         this.value = value;
         this.random();
         this.sonList = [];
+        this.isBlinking = false;
         // this.linkList = [];
     }
 
@@ -370,6 +371,7 @@ class Node {
       //      this.selected = false;
         }
     }
+
     selectNode() {
         if (this.selected === true) {
             this.selected = false;
@@ -387,7 +389,21 @@ class Node {
         ctx.strokeRect(this.x, this.y, this.width, this.height);
     }
 
+    blink() {
+        ctx.save();
+        ctx.beginPath();
+        ctx.shadowColor = "lightblue";
+        ctx.shadowOffsetX = 5;
+        ctx.shadowOffsetY = 3;
+        ctx.shadowBlur = 10;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.restore();
+    }
+
     drawNode(x = this.x, y = this.y) {
+        if (this.isBlinking) {
+            this.blink();
+        }
         if (this.selected) {
             this.strokeNode();
         }
@@ -427,6 +443,9 @@ class RoundNode extends Node {
     }
 
     drawNode(x = this.x, y = this.y) {
+        if (this.isBlinking) {
+            this.blink();
+        }
         if (this.selected) {
             this.strokeNode();
         }
@@ -471,8 +490,6 @@ class Link {
         ctx.strokeStyle = this.color;
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
-        console.log(this.startX + " " + this.startY);
-        console.log(this.endX + " " + this.endY);
         ctx.moveTo(this.startX, this.startY);
         ctx.bezierCurveTo(this.endX * 0.9, this.startY * 1.1, (this.startX + this.endX) / 2, this.endY * 0.8, this.endX, this.endY);
         ctx.stroke();
@@ -596,7 +613,7 @@ secondTexture.base_image.onload = function() {
 firstMap.drawNodes();
 firstLink.drawLink();
 mode = "wait";
-
+// init();
 
 canvas.addEventListener('keydown', function (event) {
     const keys = event.key; // "a", "1", "Shift", etc.
@@ -719,6 +736,29 @@ function drawSquareOnEvent(evt) {
 //        firstMap.drawNodes();
         // drawSquare(getMousePos(canvas, evt).x, getMousePos(canvas, evt).y, 50);
     }*/
+}
+
+function init() {
+    window.requestAnimationFrame(animate);
+}
+
+var start = null;
+
+function animate(timestamp) {
+    if (start === null) {
+        start = timestamp;
+    }
+    var progress = timestamp - start;
+    if (progress > 300) {
+        if (firstRect.isBlinking) {
+            firstRect.isBlinking = false;
+        } else {
+            firstRect.isBlinking = true;
+        }
+        start = null;
+    }
+    firstMap.drawMap();
+    window.requestAnimationFrame(animate);
 }
 
 // function displayKeyPressed(evt) {
