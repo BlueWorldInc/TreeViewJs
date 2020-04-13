@@ -326,7 +326,7 @@ class Node {
         this.value = value;
         this.random();
         this.sonList = [];
-        this.linkList = [];
+        // this.linkList = [];
     }
 
     random() {
@@ -337,15 +337,15 @@ class Node {
         this.idText = idText;
     }
     
-    addLink() {
-        this.linkList.push(new Link(0, 0, 0, 0));
-    }
+    // addLink() {
+    //     this.linkList.push(new Link(0, 0, 0, 0));
+    // }
 
     drawLinks() {
-        for (let i = 0; i < this.linkList.length; i++) {
-            this.linkList[i].drawFrom(this);
-            this.linkList[i].drawTo(this.sonList[i]);
-            this.linkList[i].drawLink();
+        for (let i = 0; i < this.sonList.length; i++) {
+            this.sonList[i].link.drawFrom(this);
+            this.sonList[i].link.drawTo(this.sonList[i].son);
+            this.sonList[i].link.drawLink();
         }
     }
 
@@ -354,8 +354,17 @@ class Node {
     }
     
     addSon(son) {
-        this.sonList.push(son);
-        this.addLink();
+        this.sonList.push({son: son, link: new Link(0, 0, 0, 0)});
+    }
+
+    updateSon(son) {
+        for (let i = 0; i < this.sonList.length; i++) {
+            if (son === this.sonList[i].son) {
+                this.sonList.splice(i, 1);
+                return;
+            }
+        }
+        this.addSon(son);
     }
     
     moveNode(x, y) {
@@ -692,7 +701,7 @@ function drawSquareOnEvent(evt) {
         firstMap.tree.treeSelector();
     } else if (mode === "link") {
         if (firstMap.lastSelectedNode !== undefined) {
-            firstMap.lastSelectedNode.addSon(firstMap.tree.nodeList[5]);
+            firstMap.lastSelectedNode.updateSon(firstMap.getSelectedNode(evt));
             firstMap.drawMap();
         }
     } 
@@ -756,7 +765,6 @@ function endMouseDownMove(evt) {
     mouseDownMove.endy = getMousePos(canvas, evt).y;
     mouseDownMove.diffx = mouseDownMove.endx - mouseDownMove.startx;
     mouseDownMove.diffy = mouseDownMove.endy - mouseDownMove.starty;
-
 }
 
 function sleep(ms) {
