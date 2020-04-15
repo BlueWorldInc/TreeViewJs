@@ -73,6 +73,7 @@ class Text {
     }
 
     changeColor(color) {
+        console.log(this);
         this.color = color;
     }
 }
@@ -520,6 +521,7 @@ class panel {
         this.buttonsList = [];
         this.texture;
         this.text;
+        this.bannerTexture;
     }
 
     addButton(button) {
@@ -531,6 +533,10 @@ class panel {
         // this.texture.drawImage();
     }
 
+    addBanner(bannerTexture) {
+        this.bannerTexture = bannerTexture;
+    }
+
     addText(text) {
         this.text = text;
     }
@@ -538,10 +544,20 @@ class panel {
     drawTexture() {
         this.texture.drawTexture(this.x, this.y, this.width, this.height);
     }
+    
+    drawBanner() {
+        this.bannerTexture.drawTexture(this.x + 30, this.y + 30, 230, 50);
+    }
 
     drawText(x = 0, y = 0) {
         ctx.fillStyle = this.text.color;
+        ctx.save();
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 1;
+        ctx.textAlign = "center";
+        ctx.strokeText(this.text.text, this.x + x, this.y + y);
         this.text.drawText(this.x + x, this.y + y);
+        ctx.restore();
     }
 
     drawPanel() {
@@ -555,7 +571,8 @@ class panel {
         ctx.fillRect(this.x, this.y, this.width, this.height);
         this.drawTexture();
         this.drawButtons();
-        this.drawText(20, 50);
+        this.drawBanner();
+        this.drawText(140, 70);
     }
 
     drawButtons() {
@@ -578,6 +595,7 @@ var thirdRect = new Node(130, 80, 60, 60);
 var firstButton = new button(90, 180, 60, 60);
 var firstTexture = new Texture("img/bg_01_02.png");
 var secondTexture = new Texture("img/bg_01_02.png");
+var bannerTexture = new Texture("img/Plank_08.png");
 secondRect.changeColor("orange");
 var firstPanel = new panel(600, 0, 300, 600);
 var firstText = new Text("Hellow");
@@ -586,7 +604,7 @@ let firstTree = new Tree();
 let secondText = new Text("A", "blue");
 // canvas.focus();
 firstText.changeFont("48px serif");
-firstText.changeColor("red");
+firstText.changeColor("FireBrick");
 firstMap.addNode(firstRect);
 firstMap.addNode(secondRect);
 firstMap.addPanel(firstPanel);
@@ -595,6 +613,7 @@ firstMap.addLink(firstLink);
 firstPanel.addButton(firstButton);
 firstPanel.addTexture(firstTexture);
 firstPanel.addText(firstText);
+firstPanel.addBanner(bannerTexture);
 firstLink.drawFrom(firstRect);
 firstLink.drawTo(secondRect);
 firstMap.addTree(firstTree);
@@ -603,7 +622,11 @@ firstMap.drawMap();
 firstTexture.base_image.onload = function() {
     firstTexture.drawTexture(firstPanel.x, firstPanel.y, firstPanel.width, firstPanel.height);
     firstPanel.drawButtons();
-    firstPanel.drawText(20, 50);
+    firstPanel.drawBanner();
+    ctx.save();
+    ctx.textAlign = "center";
+    firstPanel.drawText(140, 70);
+    ctx.restore();
 }
 secondTexture.base_image.onload = function() {
     secondTexture.drawTexture(firstMap.x, firstMap.y, firstMap.drawableArea.width, firstMap.height);
@@ -612,6 +635,8 @@ secondTexture.base_image.onload = function() {
 //console.log(firstText.text.complete);
 firstMap.drawNodes();
 firstLink.drawLink();
+
+
 mode = "wait";
 // init();
 
