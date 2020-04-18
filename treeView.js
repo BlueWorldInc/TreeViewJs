@@ -270,13 +270,12 @@ class Tree {
         for (let i = 0; i < this.nodeList.length; i++) {
             this.nodeList[i].selected = true;
         }
-        //this.nodeList[0].moveNode(x, y);
         for (let i = 0; i < this.nodeList.length; i++) {
             let n = this.nodeList[i];
             n.moveNode(n.x + x - baseX + n.width/2, n.y + y - baseY + n.height/2);
         }
         for (let i = 0; i < this.nodeList.length; i++) {
-            // this.nodeList[i].selectNode();
+            this.nodeList[i].selected = false;
         }
         this.drawTree();
         this.treeSelector();
@@ -288,13 +287,13 @@ class Tree {
             if (this.nodeList[i].x < this.selectorDimension.minX) {
                 this.selectorDimension.minX = this.nodeList[i].x;
             }
-            if (this.nodeList[i].x > this.selectorDimension.maxX) {
+            if (this.nodeList[i].x + this.nodeList[i].width > this.selectorDimension.maxX) {
                 this.selectorDimension.maxX = this.nodeList[i].x + this.nodeList[i].width;
             }
             if (this.nodeList[i].y < this.selectorDimension.minY) {
                 this.selectorDimension.minY = this.nodeList[i].y;
             }
-            if (this.nodeList[i].y > this.selectorDimension.maxY) {
+            if (this.nodeList[i].y + this.nodeList[i].height > this.selectorDimension.maxY) {
                 this.selectorDimension.maxY = this.nodeList[i].y + this.nodeList[i].height;
             }
         }
@@ -604,7 +603,7 @@ let firstTree = new Tree();
 let secondText = new Text("A", "blue");
 // canvas.focus();
 firstText.changeFont("48px serif");
-firstText.changeColor("FireBrick");
+firstText.changeColor("Black");
 firstMap.addNode(firstRect);
 firstMap.addNode(secondRect);
 firstMap.addPanel(firstPanel);
