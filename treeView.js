@@ -202,17 +202,22 @@ class map {
         return false;
     }
 
-    selectNode(evt) {
+    selectNode(evt, color = "default") {
         var hoveredNode = this.getSelectedNode(evt);
         if (hoveredNode !== false) {
             // if (this.isHovered(evt, hoveredNode)) {
             // if (hoveredNode.selected) {
             hoveredNode.selectNode();
-            this.drawMap();
-            this.drawNodes();
             if (hoveredNode.selected) {
                 this.lastSelectedNode = hoveredNode;
+                if (color !== "default") {
+                    hoveredNode.strokeColor = color;
+                } else {
+                    hoveredNode.strokeColor = "red";
+                }
             }
+            this.drawMap();
+            this.drawNodes();
             // } else {
             // hoveredNode.selectNode();
             // }
@@ -338,6 +343,7 @@ class Node {
         this.random();
         this.sonList = [];
         this.isBlinking = false;
+        this.strokeColor = "red";
         // this.linkList = [];
     }
 
@@ -395,7 +401,7 @@ class Node {
 
     strokeNode() {
         ctx.beginPath();
-        ctx.strokeStyle = 'red';
+        ctx.strokeStyle = this.strokeColor;
         ctx.lineWidth = 5;
         ctx.strokeRect(this.x, this.y, this.width, this.height);
     }
@@ -447,7 +453,7 @@ class RoundNode extends Node {
 
     strokeNode(x = this.x, y = this.y) {
         ctx.beginPath();
-        ctx.strokeStyle = 'red';
+        ctx.strokeStyle = this.strokeColor;
         ctx.lineWidth = 5;
         ctx.arc(x + (this.width / 2), y + (this.height / 2), this.width / 2, 0, 2 * Math.PI);
         ctx.stroke();
@@ -767,7 +773,7 @@ function drawSquareOnEvent(evt) {
                 firstMap.drawMap();
             } else {
                 firstMap.unSelectAll();
-                firstMap.selectNode(evt);
+                firstMap.selectNode(evt, "blue");
                 firstMap.tree.parentLinkSet = true;
             }
         // }
