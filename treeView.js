@@ -6,7 +6,7 @@ var ctx = canvas.getContext('2d');
 // ctx.clearRect(0, 0, 300, 300);
 const WIDTH = canvas.width;
 const HEIGHT = canvas.height;
-
+canvas.focus();
 
 var mode = "add";
 
@@ -221,6 +221,10 @@ class map {
         }
     }
 
+    unSelectAll() {
+        this.tree.unSelectAll();
+    }
+
     resizeDrawableArea(newWidth, newHeight = this.height) {
         this.drawableArea.width = newWidth;
         this.drawableArea.height = newHeight;
@@ -234,6 +238,7 @@ class Tree {
         this.nodeList = [];
         this.defaultTree();
         this.selectorDimension = {minX: 0, maxX: 0, minY: 0, maxY:0, midX: 0, midY: 0};
+        this.parentLinkSet = false;
     }
 
     defaultTree() {
@@ -299,6 +304,12 @@ class Tree {
         }
         this.selectorDimension.midX = ((this.selectorDimension.maxX - this.selectorDimension.minX) / 2) + this.selectorDimension.minX ;
         this.selectorDimension.midY = ((this.selectorDimension.maxY - this.selectorDimension.minY) / 2) + this.selectorDimension.minY ;
+    }
+
+    unSelectAll() {
+        for (let i = 0; i < this.nodeList.length; i++) {
+            this.nodeList[i].selected = false;
+        }
     }
 
     treeSelector() {
@@ -645,6 +656,10 @@ canvas.addEventListener('keydown', function (event) {
     // alert(keys);
     displayArea.innerHTML = keys;
     switchMode(keys);
+    if (keys === "l")
+        switchLink(keys);
+    if (keys === "Escape")
+        unSelectAll();
 });
 
 var c = 0;
@@ -703,7 +718,7 @@ function drawCircleOnEvent(evt) {
 }
 
 function startMouseMove(evt) {
-    if (mode === "select" || mode === "wait") {
+    if (mode === "select") {
         if (firstMap.lastSelectedNode !== undefined) {
             firstMap.moveNode(firstMap.lastSelectedNode, getMousePos(canvas, evt).x, getMousePos(canvas, evt).y);
             firstPanel.changeText(firstMap.lastSelectedNode.value);
@@ -714,10 +729,17 @@ function startMouseMove(evt) {
 
 function drawSquareOnEvent(evt) {
     endMouseDownMove(evt);
-    if (mode === "select" || mode === "wait") {
+    if (mode === "select") {
         firstMap.selectNode(evt);
         if (firstMap.lastSelectedNode !== undefined) {
             firstMap.moveNode(firstMap.lastSelectedNode, getMousePos(canvas, evt).x, getMousePos(canvas, evt).y);
+            firstPanel.changeText(firstMap.lastSelectedNode.value);
+        }
+        firstMap.drawMap();
+    } else if (mode === "wait") {
+        firstMap.unSelectAll();
+        firstMap.selectNode(evt);
+        if (firstMap.lastSelectedNode !== undefined) {
             firstPanel.changeText(firstMap.lastSelectedNode.value);
         }
         firstMap.drawMap();
@@ -739,10 +761,16 @@ function drawSquareOnEvent(evt) {
         firstMap.drawMap();
         firstMap.tree.treeSelector();
     } else if (mode === "link") {
-        if (firstMap.lastSelectedNode !== undefined) {
-            firstMap.lastSelectedNode.updateSon(firstMap.getSelectedNode(evt));
-            firstMap.drawMap();
-        }
+        // if (firstMap.lastSelectedNode !== undefined) {
+            if (firstMap.tree.parentLinkSet) {
+                firstMap.lastSelectedNode.updateSon(firstMap.getSelectedNode(evt));
+                firstMap.drawMap();
+            } else {
+                firstMap.unSelectAll();
+                firstMap.selectNode(evt);
+                firstMap.tree.parentLinkSet = true;
+            }
+        // }
     } 
     
     
@@ -815,6 +843,15 @@ function switchMode(key) {
     } else {
         mode = "wait";
     }
+}
+
+function switchLink() {
+    firstMap.tree.parentLinkSet = false;
+}
+
+function unSelectAll() {
+    firstMap.unSelectAll();
+    firstMap.drawMap();
 }
 
 function startMouseDownMove(evt) {
